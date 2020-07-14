@@ -17,6 +17,7 @@ module.exports = {
                 email,
                 username,
                 password,
+                createdAt,
             });
         };
 
