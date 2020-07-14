@@ -18,8 +18,8 @@ module.exports = {
                 username,
                 password,
             });
-        }
+        };
 
         return response.json(user);
     }
-}
+};
