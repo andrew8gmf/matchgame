@@ -62,6 +62,6 @@ module.exports = {
     },
 
     async home(request, response) {
-        response.send({ ok: true });
+        response.send({ ok: true, user: request.userId });
     },
 };
