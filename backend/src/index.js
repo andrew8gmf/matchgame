@@ -1,15 +1,12 @@
 const express = require('express');
+const app = express();
+const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 const routes = require('./routes');
 
-const dotenv = require('dotenv');
-dotenv.config();
-
-const app = express();
-
 mongoose.connect(
   process.env.DB_CONNECT,
-  { useNewUrlParser: true, useUnifiedTopology: true }
+  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
 );
 
 app.use(express.json());

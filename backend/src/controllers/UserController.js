@@ -17,10 +17,13 @@ module.exports = {
                 email,
                 username,
                 password,
-                createdAt,
             });
+
+            user.password = undefined;
+
+            return response.json(user);
         };
 
-        return response.json(user);
+        return res.status(400).send({ error: 'User already exists' });
     }
 };
