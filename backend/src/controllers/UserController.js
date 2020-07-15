@@ -1,5 +1,14 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const authConfig = require('../config/auth');
+
+function generateToken(params = {}) {
+    return jwt.sign(params, authConfig.secret, {
+        expiresIn: 86400,
+    });
+};
 
 module.exports = {
     async index(request, response) {
@@ -22,7 +31,10 @@ module.exports = {
 
             user.password = undefined;
 
-            return response.json(user);
+            return response.json({
+                user,
+                token: generateToken({ id: user.id }),
+            });
         };
 
         return response.status(400).send({ error: 'User already exists' });
@@ -43,6 +55,9 @@ module.exports = {
 
         user.password = undefined;
 
-        response.send({ user });
+        response.json({
+            user,
+            token: generateToken({ id: user.id }),
+        });
     },
 };
