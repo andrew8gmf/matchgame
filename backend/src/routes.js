@@ -1,7 +1,7 @@
 const { Router } = require('express');
 
-const UserController = require('./controllers/UserController');
-const SearchController = require('./controllers/SearchController');
+const UserController = require('./controllers/userController');
+const SearchController = require('./controllers/searchController');
 
 const authMiddleware = require('./middlewares/auth');
 
