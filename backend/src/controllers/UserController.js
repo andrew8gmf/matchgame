@@ -60,4 +60,8 @@ module.exports = {
             token: generateToken({ id: user.id }),
         });
     },
+
+    async home(request, response) {
+        response.send({ ok: true });
+    },
 };
