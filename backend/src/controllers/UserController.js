@@ -2,10 +2,8 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const authConfig = require('../config/auth');
-
 function generateToken(params = {}) {
-    return jwt.sign(params, authConfig.secret, {
+    return jwt.sign(params, process.env.TOKEN_SECRET, {
         expiresIn: 86400,
     });
 };
