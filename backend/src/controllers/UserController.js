@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 
 module.exports = {
     async index(request, response) {
@@ -24,6 +25,24 @@ module.exports = {
             return response.json(user);
         };
 
-        return res.status(400).send({ error: 'User already exists' });
-    }
+        return response.status(400).send({ error: 'User already exists' });
+    },
+
+    async show(request, response) {
+        const { email, password } = request.body;
+
+        const user = await User.findOne({ email }).select('+password');
+
+        if (!user) {
+            return response.status(400).send({ error: 'Invalid email' });
+        };
+
+        if (!await bcrypt.compare(password, user.password)) {
+            return response.status(400).send({ error: 'Invalid password' });
+        };
+
+        user.password = undefined;
+
+        response.send({ user });
+    },
 };
