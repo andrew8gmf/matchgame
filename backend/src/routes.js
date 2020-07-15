@@ -5,9 +5,9 @@ const SearchController = require('./controllers/SearchController');
 
 const routes = Router();
 
-routes.get('/users', UserController.index);
-routes.post('/register', UserController.store);
-routes.post('/login', UserController.show);
+routes.get('/users', UserController.list);
+routes.post('/register', UserController.register);
+routes.post('/login', UserController.login);
 
 routes.get('/search', SearchController.index);
 

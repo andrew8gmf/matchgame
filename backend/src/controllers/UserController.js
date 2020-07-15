@@ -11,13 +11,13 @@ function generateToken(params = {}) {
 };
 
 module.exports = {
-    async index(request, response) {
+    async list(request, response) {
         const users = await User.find();
 
         return response.json(users);
     },
 
-    async store(request, response) {
+    async register(request, response) {
         const { email, username, password } = request.body;
 
         let user = await User.findOne({ email });
@@ -40,7 +40,7 @@ module.exports = {
         return response.status(400).send({ error: 'User already exists' });
     },
 
-    async show(request, response) {
+    async login(request, response) {
         const { email, password } = request.body;
 
         const user = await User.findOne({ email }).select('+password');
