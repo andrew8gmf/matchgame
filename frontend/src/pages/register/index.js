@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 import { Form, Container } from "./styles";
+
+import api from "../../services/api";
 
 class Register extends Component {
   state = {
@@ -11,9 +13,20 @@ class Register extends Component {
     error: ""
   };
 
-  handleRegister = e => {
+  handleRegister = async e => {
     e.preventDefault();
-    alert("Eu vou te registrar");
+    const { username, email, password } = this.state;
+    if (!username || !email || !password) {
+      this.setState({ error: "Preencha todos os dados para se cadastrar" });
+    } else {
+      try {
+        await api.post("/register", { username, email, password });
+        this.props.history.push("/");
+      } catch (err) {
+        console.log(err);
+        this.setState({ error: "Ocorreu um erro ao registrar sua conta" });
+      }
+    }
   };
 
   render() {
@@ -45,4 +58,4 @@ class Register extends Component {
   }
 }
 
-export default Register;
+export default withRouter(Register);
