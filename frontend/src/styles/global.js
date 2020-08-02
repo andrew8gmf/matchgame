@@ -2,7 +2,7 @@ import { createGlobalStyle } from "styled-components";
 
 import "font-awesome/css/font-awesome.css";
 
-export const GlobalStyle = createGlobalStyle`
+export default createGlobalStyle`
 * {
   box-sizing: border-box;
   padding: 0;
