@@ -3,6 +3,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authConfig = require('../config/auth.json');
 
+const { API_KEY } = require('../config/mail.json');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(API_KEY);
+const crypto = require('crypto');
+
 function generateToken(params = {}) {
     return jwt.sign(params, authConfig.secret, {
         expiresIn: 86400,
@@ -62,5 +67,45 @@ module.exports = {
 
     async home(request, response) {
         response.send({ ok: true, user: request.userId });
+    },
+
+    async forgot(request, response) {
+        const { email } = request.body;
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return response.status(400).send({ error: 'User not found' });
+        };
+
+        const token = crypto.randomBytes(20).toString('hex');
+
+        const now = new Date();
+        now.setHours(now.getHours() + 1);
+
+        await User.findByIdAndUpdate(user.id, {
+            '$set': {
+              passwordResetToken: token,
+              passwordResetExpires: now,
+            }
+        });
+
+        const msg = {
+            to: email,
+            from: 'noreply@matchgame.com',
+            subject: 'Sending with Twilio SendGrid is Fun',
+            text: 'and easy to do anywhere, even with Node.js',
+            html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+        };
+
+        try {
+            await sgMail.send(msg);
+        } catch (error) {
+            console.error(error);
+         
+            if (error.response) {
+              console.error(error.response.body)
+            }
+        }
     },
 };
