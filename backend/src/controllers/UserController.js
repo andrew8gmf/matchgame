@@ -93,9 +93,8 @@ module.exports = {
         const msg = {
             to: email,
             from: 'noreply@matchgame.com',
-            subject: 'Sending with Twilio SendGrid is Fun',
-            text: 'and easy to do anywhere, even with Node.js',
-            html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+            subject: 'Change your MatchGame account password',
+            html: '../resources/mail/forgot_password.html',
         };
 
         try {
