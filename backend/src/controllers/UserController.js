@@ -116,17 +116,17 @@ module.exports = {
 
         if (!user) {
             return response.status(400).send({ error: 'User not found' });
-        }
+        };
         
         if (token !== user.passwordResetToken) {
             return response.status(400).send({ error: 'Token invalid' });
-        }
+        };
             
         const now = new Date();
 
         if (now > user.passwordResetExpires) {
             return response.status(400).send({ error: 'Token expired, generate a new one' });
-        }  
+        };
 
         user.password = password;
 
