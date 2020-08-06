@@ -88,7 +88,8 @@ module.exports = {
               passwordResetToken: token,
               passwordResetExpires: now,
             }
-        });
+        }, { new: true, useFindAndModify: false }
+        );
 
         const msg = {
             to: email,
