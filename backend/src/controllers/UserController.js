@@ -94,7 +94,7 @@ module.exports = {
             to: email,
             from: 'noreply@matchgame.com',
             subject: 'Change your MatchGame account password',
-            html: '../resources/mail/forgot_password.html',
+            html: `<p>Você esqueceu sua senha? Não tem problema, utilize esse token: ${token}</p>`,
         };
 
         try {
