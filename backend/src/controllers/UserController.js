@@ -94,11 +94,12 @@ module.exports = {
             to: email,
             from: 'noreply@matchgame.com',
             subject: 'Change your MatchGame account password',
-            html: `<p>Você esqueceu sua senha? Não tem problema, utilize esse token: ${token}</p>`,
+            html: `<p>Esqueceu sua senha? Utilize esse token: ${token}</p>`,
         };
 
         try {
             await sgMail.send(msg);
+            return response.send();
         } catch (error) {
             console.error(error);
          
@@ -106,5 +107,31 @@ module.exports = {
               console.error(error.response.body)
             }
         }
+    },
+
+    async reset(request, response) {
+        const { email, token, password } = request.body;
+
+        const user = await User.findOne({ email }).select('+passwordResetToken passwordResetExpires');
+
+        if (!user) {
+            return response.status(400).send({ error: 'User not found' });
+        }
+        
+        if (token !== user.passwordResetToken) {
+            return response.status(400).send({ error: 'Token invalid' });
+        }
+            
+        const now = new Date();
+
+        if (now > user.passwordResetExpires) {
+            return response.status(400).send({ error: 'Token expired, generate a new one' });
+        }  
+
+        user.password = password;
+
+        await user.save();
+
+        response.send();
     },
 };

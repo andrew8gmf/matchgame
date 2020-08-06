@@ -12,6 +12,7 @@ routes.post('/register', UserController.register);
 routes.post('/login', UserController.login);
 routes.get('/home', authMiddleware, UserController.home);
 routes.post('/forgot_password', UserController.forgot);
+routes.post('/reset_password', UserController.reset);
 
 routes.get('/search', SearchController.index);
 
