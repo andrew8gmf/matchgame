@@ -8,6 +8,8 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(API_KEY);
 const crypto = require('crypto');
 
+const mongoose = require('mongoose');
+
 function generateToken(params = {}) {
     return jwt.sign(params, authConfig.secret, {
         expiresIn: 86400,
@@ -78,7 +80,7 @@ module.exports = {
             return response.status(400).send({ error: 'User not found' });
         };
 
-        const token = crypto.randomBytes(20).toString('hex');
+        const token = generateToken({ id: user.id });
 
         const now = new Date();
         now.setHours(now.getHours() + 1);
@@ -91,16 +93,18 @@ module.exports = {
         }, { new: true, useFindAndModify: false }
         );
 
+        const link = `http://localhost:3333/reset_password/${token}`;
+
         const msg = {
             to: email,
-            from: 'noreply@matchgame.com',
+            from: 'andrew8gmf@gmail.com',
             subject: 'Change your MatchGame account password',
-            html: `<p>Esqueceu sua senha? Utilize esse token: ${token}</p>`,
+            html: `<p>Esqueceu sua senha? Clique aqui: ${link}</p>`,
         };
 
         try {
             await sgMail.send(msg);
-            return response.send();
+            return response.send({ message: 'Password reset link has been successfully sent to your inbox' });
         } catch (error) {
             console.error(error);
          
@@ -111,9 +115,12 @@ module.exports = {
     },
 
     async reset(request, response) {
-        const { email, token, password } = request.body;
+        const { password } = request.body;
+        const { token } = request.params;
+        const decoded = jwt.verify(token, authConfig.secret);
+        console.log(decoded.id);
 
-        const user = await User.findOne({ email }).select('+passwordResetToken passwordResetExpires');
+        const user = await User.findOne({ _id: decoded.id }).select('+passwordResetToken passwordResetExpires');
 
         if (!user) {
             return response.status(400).send({ error: 'User not found' });
@@ -133,6 +140,6 @@ module.exports = {
 
         await user.save();
 
-        response.send();
+        response.send({ message: 'Password changed' });
     },
 };
