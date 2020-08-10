@@ -87,11 +87,10 @@ module.exports = {
 
         await User.findByIdAndUpdate(user.id, {
             '$set': {
-              passwordResetToken: token,
-              passwordResetExpires: now,
+                passwordResetToken: token,
+                passwordResetExpires: now,
             }
-        }, { new: true, useFindAndModify: false }
-        );
+        }, { new: true, useFindAndModify: false });
 
         const link = `http://localhost:3333/reset_password/${token}`;
 
@@ -107,9 +106,9 @@ module.exports = {
             return response.send({ message: 'Password reset link has been successfully sent to your inbox' });
         } catch (error) {
             console.error(error);
-         
+
             if (error.response) {
-              console.error(error.response.body)
+                console.error(error.response.body)
             }
         }
     },
@@ -118,18 +117,17 @@ module.exports = {
         const { password } = request.body;
         const { token } = request.params;
         const decoded = jwt.verify(token, authConfig.secret);
-        console.log(decoded.id);
 
         const user = await User.findOne({ _id: decoded.id }).select('+passwordResetToken passwordResetExpires');
 
         if (!user) {
             return response.status(400).send({ error: 'User not found' });
         };
-        
+
         if (token !== user.passwordResetToken) {
             return response.status(400).send({ error: 'Token invalid' });
         };
-            
+
         const now = new Date();
 
         if (now > user.passwordResetExpires) {
