@@ -8,8 +8,6 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(API_KEY);
 const crypto = require('crypto');
 
-const mongoose = require('mongoose');
-
 function generateToken(params = {}) {
     return jwt.sign(params, authConfig.secret, {
         expiresIn: 86400,
@@ -37,13 +35,40 @@ module.exports = {
 
             user.password = undefined;
 
-            return response.json({
-                user,
-                token: generateToken({ id: user.id }),
-            });
+            const token = generateToken({ id: user.id });
+
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+
+            await User.findByIdAndUpdate(user.id, {
+                '$set': {
+                    emailConfirmationToken: token,
+                    emailConfirmationExpires: now,
+                }
+            }, { new: true, useFindAndModify: false });
+
+            const link = `http://localhost:3333/verify_email?token=${token}`;
+
+            const msg = {
+                to: email,
+                from: 'andrew8gmf@gmail.com',
+                subject: 'Confirm your MatchGame account',
+                html: `<p>Para confirmar sua conta clique aqui: ${link}</p>`,
+            };
+
+            try {
+                await sgMail.send(msg);
+                return response.send({ message: 'Email confirmation link has been successfully sent to your inbox' });
+            } catch (error) {
+                console.error(error);
+
+                if (error.response) {
+                    console.error(error.response.body)
+                }
+            }
         };
 
-        return response.status(400).send({ error: 'User already exists' });
+        return response.status(400).send({ error: 'Email is already in use' });
     },
 
     async login(request, response) {

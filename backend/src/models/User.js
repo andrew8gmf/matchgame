@@ -25,6 +25,19 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     select: false,
   },
+  emailConfirmationToken: {
+    type: String,
+    select: false,
+  },
+  emailConfirmationExpires: {
+    type: Date,
+    select: false,
+  },
+  isVerified: {
+    type: Boolean,
+    select: false,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
