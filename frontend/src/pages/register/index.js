@@ -51,7 +51,7 @@ class Register extends Component {
           />
           <button type="submit">Cadastrar grátis</button>
           <hr />
-          <Link to="/">Fazer login</Link>
+          <Link to="/login">Fazer login</Link>
         </Form>
       </Container>
     );
