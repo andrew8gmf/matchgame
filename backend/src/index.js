@@ -6,9 +6,12 @@ const routes = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
 
+require('dotenv').config();
+
+const uri = process.env.ATLAS_URI;
+
 mongoose.connect(
-  "mongodb+srv://root:admin@users.maiz7.mongodb.net/teste?retryWrites=true&w=majority",
-  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
+  uri, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
 );
 
 app.use(cors());

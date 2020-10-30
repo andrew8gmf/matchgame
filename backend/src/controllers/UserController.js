@@ -1,15 +1,14 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const authConfig = require('../config/auth.json');
+require('dotenv').config();
 
-const { API_KEY } = require('../config/mail.json');
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(API_KEY);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const crypto = require('crypto');
 
 function generateToken(params = {}) {
-    return jwt.sign(params, authConfig.secret, {
+    return jwt.sign(params, process.env.AUTH_SECRET, {
         expiresIn: 86400,
     });
 };
@@ -141,7 +140,7 @@ module.exports = {
     async reset(request, response) {
         const { password } = request.body;
         const { token } = request.params;
-        const decoded = jwt.verify(token, authConfig.secret);
+        const decoded = jwt.verify(token, process.env.AUTH_SECRET);
 
         const user = await User.findOne({ _id: decoded.id }).select('+passwordResetToken passwordResetExpires');
 
